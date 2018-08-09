@@ -93,14 +93,16 @@ pipeline {
   			echo "identify the user"
   			sh 'whoami'
   			echo "$NODE_NAME is the current node"
-  			echo "git pull"
-  		    sh 'git pull'
   		    echo 'Stashing any local changes'
   		    sh 'git stash'
   		    echo "Checking out dev branch"
   		    sh 'git checkout dev'
+  		    echo "git pull"
+  		    sh 'git pull'
   		    echo "Cheking out master branch"
   		    sh 'git checkout master'
+  		    echo "git pull"
+  		    sh 'git pull'
   		    echo "Merging dev into master branch"
   		    sh 'git merge dev'
   		    echo "Pushing to origin master"
