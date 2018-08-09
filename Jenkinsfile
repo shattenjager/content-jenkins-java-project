@@ -58,7 +58,6 @@ pipeline {
         sh "wget http://tpavan-d69ca7ed1.mylabserver.com/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
 
-        
 
        }
      } 
@@ -71,7 +70,6 @@ pipeline {
 		sh "wget http://tpavan-d69ca7ed1.mylabserver.com/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
 
-		
 
 		}
      }
@@ -92,7 +90,7 @@ pipeline {
 		 label 'apache'
   		}
   		when {
-  		    branch 'master'
+  		    branch 'dev'
   		}
   		steps {
   		    echo 'Stashing any local changes'
