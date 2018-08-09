@@ -45,7 +45,6 @@ pipeline {
         steps {	
             sh "mkdir /var/www/html/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}"
             sh "cp dist/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/"
-
 			}
 		}
 		
@@ -58,7 +57,6 @@ pipeline {
         sh "wget http://tpavan-d69ca7ed1.mylabserver.com/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
 
-
        }
      } 
      stage("Running on Docker Debian"){
@@ -69,7 +67,6 @@ pipeline {
 
 		sh "wget http://tpavan-d69ca7ed1.mylabserver.com/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
-
 
 		}
      }
@@ -93,12 +90,19 @@ pipeline {
   		    branch 'dev'
   		}
   		steps {
+  			echo "identify the user"
+  			sh 'whoami'
+  			echo "$NODE_NAME is the current node"
   		    echo 'Stashing any local changes'
   		    sh 'git stash'
   		    echo "Checking out dev branch"
   		    sh 'git checkout dev'
+  		    echo "git pull"
+  		    sh 'git pull'
   		    echo "Cheking out master branch"
   		    sh 'git checkout master'
+  		    echo "git pull"
+  		    sh 'git pull'
   		    echo "Merging dev into master branch"
   		    sh 'git merge dev'
   		    echo "Pushing to origin master"
