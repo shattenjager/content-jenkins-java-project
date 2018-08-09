@@ -43,8 +43,8 @@ pipeline {
     	}
 
         steps {	
-        sh "mkdir /var/www/html/rectangles/all/${env.BRANCH_NAME}"
-        sh "cp dist/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/all/${env.BRANCH_NAME}"
+            sh "mkdir /var/www/html/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}"
+            sh "cp dist/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/"
 
 			}
 		}
@@ -55,7 +55,7 @@ pipeline {
         }
       	steps {
 
-        sh "wget http://tpavan-d69ca7ed1.mylabserver.com/rectangles/all/${env.BRANCH_NAME}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
+        sh "wget http://tpavan-d69ca7ed1.mylabserver.com/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
 
         
@@ -68,8 +68,8 @@ pipeline {
          }
 		steps {
 
-		sh "wget http://tpavan-d69ca7ed1.mylabserver.com/rectangles/all/${env.BRANCH_NAME}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
-    sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
+		sh "wget http://tpavan-d69ca7ed1.mylabserver.com/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
+        sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
 
 		
 
@@ -84,7 +84,7 @@ pipeline {
      	}
          steps {
 
-             sh "cp /var/www/html/rectangles/all/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/green/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
+             sh "cp /var/www/html/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/green/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         }
     }
     stage('Promote Dev branch to Master'){
@@ -95,9 +95,6 @@ pipeline {
   		    branch 'master'
   		}
   		steps {
-
-
-
   		    echo 'Stashing any local changes'
   		    sh 'git stash'
   		    echo "Checking out dev branch"
@@ -107,7 +104,6 @@ pipeline {
   		    echo "Merging dev into master branch"
   		    sh 'git merge dev'
   		    echo "Pushing to origin master"
-
   		    sh 'git push origin master'
   		}
     }
