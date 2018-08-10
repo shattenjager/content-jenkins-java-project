@@ -10,6 +10,14 @@ pipeline {
 
 
   stages {
+  	stage('Say Hello'){
+  	    agent any
+  	    steps {
+  	        sayHello 'Hell yeah'
+  	    }
+
+  	}
+
 	stage('Unit Tests') {
 		agent {
     	    label'apache'
