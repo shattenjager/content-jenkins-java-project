@@ -87,7 +87,7 @@ pipeline {
 		 label 'apache'
   		}
   		when {
-  		    branch 'dev'
+  		    branch 'master'
   		}
   		steps {
   			echo "identify the user"
