@@ -43,29 +43,29 @@ pipeline {
     	}
 
         steps {	
-            sh "mkdir /var/www/html/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}"
-            sh "cp dist/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/"
+            sh "if ![ -d '/var/www/html/rectangles/all/${env.BRANCH_NAME}' ]; then mkdir /var/www/html/rectangles/all/${env.BRANCH_NAME}; fi"
+            sh "cp dist/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/all/${env.BRANCH_NAME}/"
 			}
 		}
 		
-	stage("Running on CentOS") {
+	stage('Running on CentOS') {
         agent {
             label 'CentOS'
         }
       	steps {
 
-        sh "wget http://tpavan-d69ca7ed1.mylabserver.com/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
+        sh "wget http://tpavan-d69ca7ed1.mylabserver.com/rectangles/all/${env.BRANCH_NAME}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
 
        }
      } 
-     stage("Running on Docker Debian"){
+     stage('Running on Docker Debian'){
          agent{
              docker 'openjdk:10.0-jre'
          }
 		steps {
 
-		sh "wget http://tpavan-d69ca7ed1.mylabserver.com/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
+		sh "wget http://tpavan-d69ca7ed1.mylabserver.com/rectangles/all/${env.BRANCH_NAME}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
 
 		}
@@ -78,8 +78,7 @@ pipeline {
      	    branch 'master'
      	}
          steps {
-
-             sh "cp /var/www/html/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/green/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
+         sh "cp /var/www/html/rectangles/all/${env.BRANCH_NAME}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/green/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         }
     }
     stage('Promote Dev branch to Master'){
@@ -97,16 +96,19 @@ pipeline {
   		    sh 'git stash'
   		    echo "Checking out dev branch"
   		    sh 'git checkout dev'
-  		    echo "git pull"
-  		    sh 'git pull'
+  		    echo "git pull origin"
+  		    sh 'git pull origin'
   		    echo "Cheking out master branch"
   		    sh 'git checkout master'
-  		    echo "git pull"
-  		    sh 'git pull'
+  		    //echo "git pull"
+  		    //sh 'git pull'
   		    echo "Merging dev into master branch"
   		    sh 'git merge dev'
   		    echo "Pushing to origin master"
   		    sh 'git push origin master'
+  		    echo "Tagging the Release"
+  		    sh "git tag rectangle-${env.MAJOR_VERSION}.${env.BUILD_NUMBER}" 
+  		    sh "git push origin rectangle-${env.MAJOR_VERSION}.${env.BUILD_NUMBER}"
   		}
     }
   }
