@@ -96,7 +96,8 @@ pipeline {
   		    sh 'git stash'
   		    echo "Checking out dev branch"
   		    sh 'git checkout dev'
-  		    echo "git pull"
+  		    echo "git pull origin"
+  		    sh 'git pull origin'
   		    echo "Cheking out master branch"
   		    sh 'git checkout master'
   		    //echo "git pull"
