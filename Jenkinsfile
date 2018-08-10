@@ -48,7 +48,7 @@ pipeline {
 			}
 		}
 		
-	stage("Running on CentOS") {
+	stage('Running on CentOS') {
         agent {
             label 'CentOS'
         }
@@ -59,7 +59,7 @@ pipeline {
 
        }
      } 
-     stage("Running on Docker Debian"){
+     stage('Running on Docker Debian'){
          agent{
              docker 'openjdk:10.0-jre'
          }
@@ -78,8 +78,7 @@ pipeline {
      	    branch 'master'
      	}
          steps {
-
-             sh "cp /var/www/html/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/green/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
+         sh "cp /var/www/html/rectangles/all/${env.BRANCH_NAME}_${env.BUILD_NUMBER}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/green/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         }
     }
     stage('Promote Dev branch to Master'){
@@ -97,16 +96,19 @@ pipeline {
   		    sh 'git stash'
   		    echo "Checking out dev branch"
   		    sh 'git checkout dev'
-  		    echo "git pull"
-  		    sh 'git pull'
+  		    //echo "git pull"
+  		    //sh 'git pull'
   		    echo "Cheking out master branch"
   		    sh 'git checkout master'
-  		    echo "git pull"
-  		    sh 'git pull'
+  		    //echo "git pull"
+  		    //sh 'git pull'
   		    echo "Merging dev into master branch"
   		    sh 'git merge dev'
   		    echo "Pushing to origin master"
   		    sh 'git push origin master'
+  		    echo "Tagging the Release"
+  		    sh "git tag rectangle-${env.MAJOR_VERSION}.${env.BUILD_NUMBER}" 
+  		    sh "git push origin rectangle-${env.MAJOR_VERSION}.${env.BUILD_NUMBER}"
   		}
     }
   }
