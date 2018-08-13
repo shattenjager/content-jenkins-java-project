@@ -1,23 +1,33 @@
 pipeline {
   agent none
-  
+
   environment {
   MAJOR_VERSION = 1
   }
     options {
      buildDiscarder(logRotator(numToKeepStr: '2', artifactNumToKeepStr: '1'))
-      }    
+      }
 
 
   stages {
-  	stage('Say Hello'){
-  	    agent any
-  	    steps {
-  	        sayHello 'Hell yeah'
-  	    }
+//  stage('Say Hello')	{
+//    agent any
+//      steps {
+//        sayHello 'Porcodio'
+//      }
+  stage('Git Information') {
+      agent any
 
-  	}
+      steps {
+        echo "My Branch Name: ${env.BRANCH_NAME}"
 
+        script {
+          def myLib = new linuxacademy.git.gitStuff();
+
+          echo "My Commit: ${myLib.gitCommit("${env.WORKSPACE}/.git")}"
+        }
+      }
+    }
 	stage('Unit Tests') {
 		agent {
     	    label'apache'
@@ -28,7 +38,7 @@ pipeline {
           junit 'reports/result.xml'
         }
       }
- 
+
 	stage('Build') {
 		agent {
     	    label 'apache'
@@ -43,19 +53,19 @@ pipeline {
       			 archiveArtifacts artifacts: 'dist/*.jar', fingerprint: true
     		 }
      	}
-   }  
+   }
  }
 	stage('Deploy') {
 		agent {
     	    label 'apache'
     	}
 
-        steps {	
+        steps {
             sh "if ![ -d '/var/www/html/rectangles/all/${env.BRANCH_NAME}' ]; then mkdir /var/www/html/rectangles/all/${env.BRANCH_NAME}; fi"
             sh "cp dist/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar /var/www/html/rectangles/all/${env.BRANCH_NAME}/"
 			}
 		}
-		
+
 	stage('Running on CentOS') {
         agent {
             label 'CentOS'
@@ -66,7 +76,7 @@ pipeline {
         sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
 
        }
-     } 
+     }
      stage('Running on Docker Debian'){
          agent{
              docker 'openjdk:10.0-jre'
@@ -80,7 +90,7 @@ pipeline {
      }
      stage('Promote to Green') {
      	agent {
-         label 'apache'   
+         label 'apache'
      }
      	when {
      	    branch 'master'
@@ -115,7 +125,7 @@ pipeline {
   		    echo "Pushing to origin master"
   		    sh 'git push origin master'
   		    echo "Tagging the Release"
-  		    sh "git tag rectangle-${env.MAJOR_VERSION}.${env.BUILD_NUMBER}" 
+  		    sh "git tag rectangle-${env.MAJOR_VERSION}.${env.BUILD_NUMBER}"
   		    sh "git push origin rectangle-${env.MAJOR_VERSION}.${env.BUILD_NUMBER}"
   		}
   		post {
