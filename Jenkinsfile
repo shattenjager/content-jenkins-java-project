@@ -12,12 +12,8 @@ pipeline {
 
 
   stages {
-//  stage('Say Hello')	{
-//    agent any
-//      steps {
-//        sayHello 'Porcodio'
-//      }
-  stage('Git Information') {
+
+  	stage('Git Information') {
       agent any
 
       steps {
